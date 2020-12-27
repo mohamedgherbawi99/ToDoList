@@ -40,6 +40,7 @@
             />
 
         <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/singUpPassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_20sdp"
@@ -55,6 +56,7 @@
             />
 
         <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/singUpEmail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_20sdp"

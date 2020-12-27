@@ -42,7 +42,7 @@
         android:textColor="@color/white"
         android:textSize="@dimen/_15ssp"
         android:textStyle="bold"
-        android:text="@string/your_string_here"
+        android:text="@string/next"
         tools:ignore="RtlCompat"
         android:gravity="center"
         android:layout_margin="@dimen/_30sdp"/>

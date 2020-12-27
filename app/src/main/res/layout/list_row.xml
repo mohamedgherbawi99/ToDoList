@@ -19,7 +19,7 @@
         android:layout_centerInParent="true"
         android:layout_alignParentStart="true"
         android:textColor="@color/black"
-        android:textSize="@dimen/_18ssp"
+        android:textSize="@dimen/_14ssp"
         android:text="search"
         tools:ignore="RtlCompat"
         android:gravity="center"

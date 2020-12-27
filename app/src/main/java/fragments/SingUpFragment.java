@@ -1,87 +1,101 @@
 package fragments;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatEditText;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.todolist.todolist.R;
 import com.todolist.todolist.ui.AuthActivity;
 import com.todolist.todolist.ui.MainActivity;
 import com.todolist.todolist.ui.SplashActivity;
 
-import helperclass.MyFragmentManager;
+import java.util.Objects;
+import java.util.concurrent.Executor;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link SingUpFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+import helperclass.EmailValidation;
+import helperclass.MyFragmentManager;
+import utils.AuthUtil;
+
+
 public class SingUpFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    public SingUpFragment() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment SingUpFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static SingUpFragment newInstance(String param1, String param2) {
-        SingUpFragment fragment = new SingUpFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-    }
-
+    String TAG= "SingUpFragment";
+    Button button;
+    AppCompatTextView haveAccountLogin;
+    AppCompatEditText singUpPassword, singUpEmail;
+    FirebaseAuth mAuth;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View root = inflater.inflate(R.layout.fragment_sing_up, container, false);
-        Button button = root.findViewById(R.id.btn);
+        init(root);
 
         button.setOnClickListener(v -> {
-            startActivity(new Intent(getContext(), MainActivity.class));
-            getActivity().finish();
+            String email = Objects.requireNonNull(singUpEmail.getText()).toString();
+            String password = singUpPassword.getText().toString();
+            if (email!=null && password!=null && EmailValidation.getInstance().isEmailValid(email)){
+                AuthUtil.getInstance().singUp(email, password,getActivity(), this::updateUI);
+            }else Snackbar.make(getActivity().findViewById(android.R.id.content), "Enter Valid data", Snackbar.LENGTH_LONG).show();
+
+
         });
 
-        AppCompatTextView haveAccountLogin = root.findViewById(R.id.haveAccountLogin);
+
         haveAccountLogin.setOnClickListener(v ->
                 MyFragmentManager.getInstance().switchFragment(new LoginFragment(),R.id.auth_frame,getContext())
         );
 
+
+
+
         return root;
     }
+
+
+    public void init(View root){
+        button = root.findViewById(R.id.btn);
+        haveAccountLogin = root.findViewById(R.id.haveAccountLogin);
+        singUpPassword = root.findViewById(R.id.singUpPassword);
+        singUpEmail = root.findViewById(R.id.singUpEmail);
+        mAuth = FirebaseAuth.getInstance();
+    }
+
+
+
+
+    public void updateUI(FirebaseUser account){
+
+        if(account != null){
+            Toast.makeText(getContext(),"U Signed In successfully",Toast.LENGTH_LONG).show();
+            startActivity(new Intent(getContext(), MainActivity.class));
+            getActivity().finish();
+        }else {
+            //Toast.makeText(getContext(),"U Didnt signed in",Toast.LENGTH_LONG).show();
+            Snackbar.make(getActivity().findViewById(android.R.id.content), "U Didnt signed in", Snackbar.LENGTH_LONG).show();
+        }
+
+    }
+
+
 }

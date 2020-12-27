@@ -17,7 +17,7 @@ import adapter.ToDoLists;
 
 public class DetailsActivity extends AppCompatActivity {
 
-    static ArrayList<Task> tasks = new ArrayList<>();
+    ArrayList<Task> tasks = new ArrayList<>();
     RecyclerView tasksRecyclerView ;
     TaskAdapter taskAdapter;
 
@@ -28,16 +28,15 @@ public class DetailsActivity extends AppCompatActivity {
 
         tasksRecyclerView= findViewById(R.id.tasksRC);
 
-
         tasks.add(new Task("Assinment",true));
         tasks.add(new Task("Art",true));
         tasks.add(new Task("Number",true));
         tasks.add(new Task("Ways",true));
+
         tasksRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        taskAdapter = new TaskAdapter(this ,tasks );
+        taskAdapter = new TaskAdapter(this ,tasks);
         tasksRecyclerView.setAdapter(taskAdapter);
-
-
+        taskAdapter.notifyDataSetChanged();
 
 
 

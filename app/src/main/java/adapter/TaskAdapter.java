@@ -45,6 +45,11 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskVh> {
             context.startActivity(new Intent(context, TaskDescriptionActivity.class));
         });
 
+//        list.remove(position);
+//        recycler.removeViewAt(position);
+//        mAdapter.notifyItemRemoved(position);
+//        mAdapter.notifyItemRangeChanged(position, list.size());
+
     }
 
     @Override

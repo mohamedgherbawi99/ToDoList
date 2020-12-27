@@ -15,7 +15,7 @@ import adapter.ToDoLists;
 
 public class MainActivity extends AppCompatActivity {
 
-    static ArrayList<ToDoLists> toDoLists = new ArrayList<>();
+    ArrayList<ToDoLists> toDoLists = new ArrayList<>();
     RecyclerView toDoListRecyclerView ;
     ListAdapter listAdapter;
     @Override
