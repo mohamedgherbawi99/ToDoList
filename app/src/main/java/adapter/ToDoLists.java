@@ -1,13 +1,16 @@
 package adapter;
 
-public class ToDoLists {
+import java.io.Serializable;
+import java.util.ArrayList;
+
+public class ToDoLists implements Serializable {
 
     private String nameList;
-    private int numTask;
+    private ArrayList<Task> arrayList;
 
-    public ToDoLists(String nameList, int numTask) {
+    public ToDoLists(String nameList, ArrayList<Task> arrayList) {
         this.nameList = nameList;
-        this.numTask = numTask;
+        this.arrayList = arrayList;
     }
 
     public String getNameList() {
@@ -18,11 +21,11 @@ public class ToDoLists {
         this.nameList = nameList;
     }
 
-    public int getNumTask() {
-        return numTask;
+    public ArrayList<Task> getArrayList() {
+        return arrayList;
     }
 
-    public void setNumTask(int numTask) {
-        this.numTask = numTask;
+    public void setArrayList(ArrayList<Task> arrayList) {
+        this.arrayList = arrayList;
     }
 }

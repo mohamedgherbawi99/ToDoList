@@ -42,7 +42,9 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskVh> {
         holder.nameTask.setText(task.getTaskName());
 
         holder.taskRowRelative.setOnClickListener(v -> {
-            context.startActivity(new Intent(context, TaskDescriptionActivity.class));
+            Intent intent = new Intent(context, TaskDescriptionActivity.class);
+            intent.putExtra("task_obj", task);
+            context.startActivity(intent);
         });
 
 //        list.remove(position);

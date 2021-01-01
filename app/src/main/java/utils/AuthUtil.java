@@ -1,20 +1,16 @@
 package utils;
 
 import android.app.Activity;
-import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
-import android.widget.Toast;
+
 
 import androidx.annotation.NonNull;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.android.material.snackbar.Snackbar;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.todolist.todolist.ui.AuthActivity;
 
-import helperclass.MyFragmentManager;
 
 public class AuthUtil {
 
@@ -33,10 +29,11 @@ public class AuthUtil {
     }
 
     private final FirebaseAuth mAuth  = FirebaseAuth.getInstance();
-    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+
 
     public Boolean getCurrentUser(){
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        FirebaseUser user = mAuth.getCurrentUser();
         return user != null;
     }
 
@@ -75,6 +72,13 @@ public class AuthUtil {
 
                     // ...
                 });
+    }
+
+    public void logOut(Activity activity){
+        FirebaseAuth.getInstance().signOut();
+        Intent intent = new Intent(activity, AuthActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);//makesure user cant go back
+        activity.startActivity(intent);
     }
 
     public interface CallBackAuth {

@@ -39,9 +39,11 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.TaskVh> {
     public void onBindViewHolder(@NonNull TaskVh holder, int position) {
         ToDoLists toDoLists = toDoList.get(position);
         holder.nameList.setText(toDoLists.getNameList());
-        holder.numTask.setText(Integer.toString(toDoLists.getNumTask()));
+        holder.numTask.setText(Integer.toString(toDoLists.getArrayList().size()));
         holder.listRowRelative.setOnClickListener(v -> {
-            context.startActivity(new Intent(context, DetailsActivity.class));
+            Intent intent = new Intent(context, DetailsActivity.class);
+            intent.putExtra("list_obj", toDoLists);
+            context.startActivity(intent);
         });
 
     }

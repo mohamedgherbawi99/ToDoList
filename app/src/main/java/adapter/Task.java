@@ -1,11 +1,15 @@
 package adapter;
 
-public class Task {
+import java.io.Serializable;
+
+public class Task implements Serializable {
     private String taskName;
+    private String description;
     private boolean taskCheck;
 
-    public Task(String taskName, boolean taskCheck) {
+    public Task(String taskName, String description, boolean taskCheck) {
         this.taskName = taskName;
+        this.description = description;
         this.taskCheck = taskCheck;
     }
 
@@ -15,6 +19,14 @@ public class Task {
 
     public void setTaskName(String taskName) {
         this.taskName = taskName;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public boolean isTaskCheck() {

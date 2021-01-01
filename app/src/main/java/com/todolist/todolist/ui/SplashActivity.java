@@ -11,6 +11,8 @@ import android.widget.Button;
 
 import com.todolist.todolist.R;
 
+import utils.AuthUtil;
+
 public class SplashActivity extends AppCompatActivity {
 
     private int SPLASH_DISPLAY_LENGTH = 2000;
@@ -21,9 +23,17 @@ public class SplashActivity extends AppCompatActivity {
 
         AppCompatTextView next = findViewById(R.id.next);
         next.setOnClickListener(v -> {
-            startActivity(new Intent(SplashActivity.this, AuthActivity.class));
+
+            if (AuthUtil.getInstance().getCurrentUser()){
+                startActivity(new Intent(SplashActivity.this, MainActivity.class));
+            }else {
+                startActivity(new Intent(SplashActivity.this, AuthActivity.class));
+            }
             finish();
+
         });
+
+
 
 
 //        new Handler().postDelayed(() -> {
