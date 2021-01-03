@@ -37,6 +37,10 @@ public class AuthUtil {
         return user != null;
     }
 
+    public String getUserId(){
+        return mAuth.getCurrentUser().getUid();
+    }
+
     public void singUp(String email, String password,Activity activity, CallBackAuth callBack){
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(activity, task -> {

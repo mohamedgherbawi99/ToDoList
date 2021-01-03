@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.ImageView;
 
+import com.google.android.material.snackbar.Snackbar;
 import com.todolist.todolist.R;
 
 import java.util.ArrayList;
@@ -26,7 +27,7 @@ public class DetailsActivity extends AppCompatActivity {
     ArrayList<Task> tasks = new ArrayList<>();
     RecyclerView tasksRecyclerView ;
     TaskAdapter taskAdapter;
-    ImageView addTask;
+    ImageView addTask, finishDetails;
     AppCompatEditText taskName, taskDesc;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +35,10 @@ public class DetailsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_details);
 
         init();
+        finishDetails.setOnClickListener(v->{
+            this.finish();
+        });
+
         Intent intent = getIntent();
         ToDoLists toDoLists = (ToDoLists) intent.getSerializableExtra("list_obj");
         Log.d(TAG,toDoLists.getNameList());
@@ -48,10 +53,28 @@ public class DetailsActivity extends AppCompatActivity {
         addTask.setOnClickListener(v->{
             String taskNameAdd= taskName.getText().toString();
             String taskdesAdd= taskDesc.getText().toString();
-            Task task = new Task(taskNameAdd,taskdesAdd,true);
-            this.tasks.add(task);
-            FirestoreUtil.getInstance().update(tasks, toDoLists.getNameList());
-            taskAdapter.notifyDataSetChanged();
+            if (taskNameAdd.matches("")){
+                taskName.setError("Set item list name");
+                taskDesc.setError(null);
+            }else if (taskdesAdd.matches("")){
+                taskName.setError(null);
+                taskDesc.setError("Set item list name");
+            }else {
+                Task task = new Task(taskNameAdd,taskdesAdd,true);
+                this.tasks.add(task);
+                FirestoreUtil.getInstance().update(tasks, toDoLists.getNameList());
+                taskName.getText().clear();
+                taskDesc.getText().clear();
+                Snackbar.make(this.findViewById(android.R.id.content),
+                        "add sucess", Snackbar.LENGTH_LONG).show();
+                FirestoreUtil.getInstance().getFromDocument("lists", toDoLists.getNameList(),arrayList -> {
+                    this.tasks = arrayList;
+                    taskAdapter = new TaskAdapter(this ,arrayList);
+                    tasksRecyclerView.setAdapter(taskAdapter);
+                    taskAdapter.notifyDataSetChanged();
+                });
+
+            }
         });
 
 
@@ -75,6 +98,7 @@ public class DetailsActivity extends AppCompatActivity {
 
     private void init() {
         addTask = findViewById(R.id.addTask);
+        finishDetails = findViewById(R.id.finishDetails);
         tasksRecyclerView= findViewById(R.id.tasksRC);
         tasksRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         taskName = findViewById(R.id.taskName);

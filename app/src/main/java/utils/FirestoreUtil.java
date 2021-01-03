@@ -9,6 +9,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
@@ -44,7 +45,7 @@ public class FirestoreUtil {
     FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     public void addToList(String name, ArrayList<Task> tasks){
-        ToDoLists toDoLists = new ToDoLists(name,tasks);
+        ToDoLists toDoLists = new ToDoLists(AuthUtil.getInstance().getUserId(),name,tasks);
         db.collection("lists").document(name)
                 .set(toDoLists)
                 .addOnSuccessListener(aVoid ->
@@ -80,14 +81,46 @@ public class FirestoreUtil {
                         for (QueryDocumentSnapshot document : task.getResult()) {
                             Log.d(TAG, document.getId() + " => " + document.getData());
                             ArrayList<Task> arrayList = (ArrayList<Task>) document.get("arrayList");
-                            ToDoLists toDoLists = new ToDoLists(document.get("nameList").toString(),
-                                    arrayList);
-                            toDoListsArrayList.add(toDoLists);
-                            callBack.onComplete(toDoListsArrayList);
+                            Log.d(TAG,"Document "+document.get("userId").toString());
+                            //Log.d(TAG,AuthUtil.getInstance().getUserId());
+                            //String userId =document.get("userId").toString();
+                            if (document.get("userId").equals(AuthUtil.getInstance().getUserId())){
+                                ToDoLists toDoLists = new ToDoLists(document.get("nameList").toString(),
+                                        arrayList);
+                                toDoListsArrayList.add(toDoLists);
+                            }
                         }
+                        callBack.onComplete(toDoListsArrayList);
                     } else {
                         Log.d(TAG, "Error getting documents: ", task.getException());
                     }
+                });
+    }
+
+    public void getDataFromcollection(String collectionPath, CallBackFirestore callBackFirestore){
+        ArrayList<ToDoLists> toDoListsArrayList = new ArrayList<>();
+        db.collection(collectionPath)
+                .addSnapshotListener((snapshots, e) -> {
+                    if (e != null) {
+                        Log.w(TAG, "listen:error", e);
+                        return;
+                    }
+
+                    for (DocumentChange dc : snapshots.getDocumentChanges()) {
+                        if (dc.getType() == DocumentChange.Type.ADDED) {
+                            Log.d(TAG, "New city: " + dc.getDocument().getData());
+                            ArrayList<Task> arrayList = (ArrayList<Task>) dc.getDocument().get("arrayList");
+                            //Log.d(TAG,"Document "+dc.getDocument().get("userId").toString());
+                            //Log.d(TAG,AuthUtil.getInstance().getUserId());
+                            //String userId =document.get("userId").toString();
+                            if (dc.getDocument().get("userId").equals(AuthUtil.getInstance().getUserId())){
+                                ToDoLists toDoLists = new ToDoLists(dc.getDocument().get("nameList").toString(),
+                                        arrayList);
+                                toDoListsArrayList.add(toDoLists);
+                            }
+                        }
+                    }
+                    callBackFirestore.onComplete(toDoListsArrayList);
                 });
     }
 
@@ -98,20 +131,6 @@ public class FirestoreUtil {
                 Log.w(TAG, "Listen failed.", e);
                 return;
             }
-
-//            if (snapshot != null && snapshot.exists()) {
-//                Log.d(TAG, "Current data: " + snapshot.getData());
-//            } else {
-//                Log.d(TAG, "Current data: null");
-//            }
-//        });
-
-//        docRef.get().addOnCompleteListener(task-> {
-//            if (task.isSuccessful()) {
-//
-//                DocumentSnapshot document = task.getResult();
-
-
                 if (snapshot.exists()) {
 
                     ArrayList<Map> _tasks = (ArrayList<Map>) snapshot.get("arrayList");
@@ -132,10 +151,6 @@ public class FirestoreUtil {
                 } else {
                     Log.d(TAG, "No such document");
                 }
-//            } else {
-//                Log.d(TAG, "get failed with ", task.getException());
-//            }
-//
         });
     }
 

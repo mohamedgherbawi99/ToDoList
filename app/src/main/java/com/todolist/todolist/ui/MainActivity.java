@@ -24,8 +24,8 @@ import utils.AuthUtil;
 import utils.FirestoreUtil;
 
 public class MainActivity extends AppCompatActivity {
-
-
+    ArrayList<ToDoLists> toDoListsArrayList = new ArrayList<>();
+    private String TAG="MainActivityTAG";
     RecyclerView toDoListRecyclerView ;
     ListAdapter listAdapter;
     AppCompatTextView logOut;
@@ -33,6 +33,16 @@ public class MainActivity extends AppCompatActivity {
     ImageView backMain, add_img;
     String itemList;
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        FirestoreUtil.getInstance().getDataFromcollection("lists",arrayList -> {
+            this.toDoListsArrayList= arrayList;
+            listAdapter = new ListAdapter(this ,arrayList);
+            toDoListRecyclerView.setAdapter(listAdapter);
+            listAdapter.notifyDataSetChanged();
+        });
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,14 +50,14 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         init();
+
+        listAdapter = new ListAdapter(this ,toDoListsArrayList);
+        toDoListRecyclerView.setAdapter(listAdapter);
+        listAdapter.notifyDataSetChanged();
         logOut.setOnClickListener(v -> {
             AuthUtil.getInstance().logOut(this);
         });
-        FirestoreUtil.getInstance().getFromList("lists",arrayList -> {
-            listAdapter = new ListAdapter(this ,arrayList);
-            toDoListRecyclerView.setAdapter(listAdapter);
-            listAdapter.notifyDataSetChanged();
-        });
+
 
         backMain.setOnClickListener(v ->{
             this.finish();
@@ -62,22 +72,14 @@ public class MainActivity extends AppCompatActivity {
                 addEditText.getText().clear();
                 Snackbar.make(this.findViewById(android.R.id.content),
                  "add sucess", Snackbar.LENGTH_LONG).show();
-                listAdapter.notifyDataSetChanged();
-                toDoListRecyclerView.invalidate();
+                FirestoreUtil.getInstance().getDataFromcollection("lists",arrayList -> {
+                    listAdapter = new ListAdapter(this ,arrayList);
+                    toDoListRecyclerView.setAdapter(listAdapter);
+                    listAdapter.notifyDataSetChanged();
+                });
             }
         });
 
-
-//        toDoListRecyclerView = findViewById(R.id.toDoListRecyclerView);
-
-//        toDoLists.add(new ToDoLists("Assinment",3));
-//        toDoLists.add(new ToDoLists("Art",6));
-//        toDoLists.add(new ToDoLists("Number",7));
-//        toDoLists.add(new ToDoLists("Ways",8));
-
-//        toDoListRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-//        listAdapter = new ListAdapter(this ,toDoLists );
-//        toDoListRecyclerView.setAdapter(listAdapter);
     }
 
     private void init(){

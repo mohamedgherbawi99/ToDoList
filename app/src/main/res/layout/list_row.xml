@@ -31,7 +31,7 @@
         android:layout_centerInParent="true"
         android:textColor="@color/black"
         android:textSize="@dimen/_14ssp"
-        android:text="0"
+        android:text="20"
         tools:ignore="RtlCompat"
         android:gravity="center"
         android:layout_toStartOf="@+id/task"
